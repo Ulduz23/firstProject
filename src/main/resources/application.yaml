@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: firstProject
+
+server:
+  port: 9090
