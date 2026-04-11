@@ -2,7 +2,6 @@ package firstProject.Repositories;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import firstProject.Models.User;
 
@@ -19,13 +18,18 @@ public class UserRepository {
         users.add(new User(5L, "Orxan", "Quliyev"));
     }
 
-    public List<User> findAll() {
+    public List<User> getAllUsersList() {
         return users;
     }
 
-    public Optional<User> findById(Long id) {
-        return users.stream()
-                .filter(user -> user.getId().equals(id))
-                .findFirst();
+    public User getUserById(Long id) {
+        User user = null;
+        for (User u : users) {
+            if (u.getId().equals(id)) {
+                user = u;
+                break;
+            }
+        }
+        return user;
     }
 }
