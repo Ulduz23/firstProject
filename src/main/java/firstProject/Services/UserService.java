@@ -3,12 +3,17 @@ package firstProject.Services;
 import java.util.List;
 
 import firstProject.Models.User;
-import lombok.Getter;
-import lombok.Setter;
+import firstProject.Repositories.UserRepository;
 
-@Getter
-@Setter
 public class UserService {
 
-    private List<User> userList;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 }

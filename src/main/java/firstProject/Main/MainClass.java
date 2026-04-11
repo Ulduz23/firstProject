@@ -1,21 +1,24 @@
 package firstProject.Main;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+// import org.springframework.boot.SpringApplication;
+// import org.springframework.context.ConfigurableApplicationContext;
 
-import firstProject.Services.UserService;
-import firstProject.config.AppConfig;
-import firstProject.Models.User;
+// import firstProject.FirstProjectApplication;
+// import firstProject.Models.User;
+// import firstProject.Services.UserService;
 
 public class MainClass {
 
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext context =  new AnnotationConfigApplicationContext(AppConfig.class);
+        // ConfigurableApplicationContext context = SpringApplication.run(FirstProjectApplication.class, args);
 
-        UserService userService =  context.getBean(UserService.class);
+        // UserService userService =  context.getBean(UserService.class);
         
-        for(User user :  userService.getUserList()) {
-            System.out.println(user);
+        // for(User user :  userService.getAllUsers()) {
+        //     System.out.println(user);
 
-        }
+        // }
+
+        // context.close();
     }
 }
