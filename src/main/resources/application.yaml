@@ -1,6 +1,10 @@
 spring:
   application:
     name: firstProject
+  security:
+    user:
+      name: admin
+      password: admin
 
 server:
   port: 9090
