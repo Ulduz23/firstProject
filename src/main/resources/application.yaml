@@ -2,23 +2,17 @@ server:
   servlet:
     context-path: /api/market-place
     application-display-name: Market Place
+
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_URL}:5432/${DB_NAME}?currentSchema=${DB_SCHEMA}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/market_place
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
-    hikari:
-      pool-name: MarketPlacePool
-      maximum-pool-size: 10
-      minimum-idle: 5
-      connection-timeout: 2000000
-      idle-timeout: 6000000
-      max-lifetime: 18000000
-      auto-commit: false
-      leak-detection-threshold: 200000
   jpa:
-    open-in-view: false
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
     show-sql: true
