@@ -38,8 +38,6 @@ public class BrandServiceImpl implements BrandService {
     public ResponseBrandDto getById(Long id) {
 
         var optionalBrand = brandRepository.findById(id);
-        var optionalBrand1 = brandRepository.findById(id);
-        var optionalBrand2 = brandRepository.findById(id);
 
         return toResponseDto(optionalBrand.orElseThrow());
     }
@@ -75,8 +73,6 @@ public class BrandServiceImpl implements BrandService {
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new ProductException(ProductErrorEnum.BRAND_NOT_FOUND));
 
         var brands = brandRepository.findAllById(List.of(1L, 2L, 3L));
-
-        var categories = brand.getCategories();
 
         List<ResponseItemDto> itemsOfAllBrands = new ArrayList<>();
 
