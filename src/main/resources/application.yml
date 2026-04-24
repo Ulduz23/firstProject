@@ -2,9 +2,10 @@ server:
   port: 8081
   servlet:
     context-path: /api/market-place
-    application-display-name: Market Place
 
 spring:
+  application:
+    name: Market Place         
   datasource:
     url: jdbc:postgresql://localhost:5432/market_place
     username: postgres
