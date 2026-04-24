@@ -4,6 +4,7 @@ import com.abbtech.dto.request.RequestBrandDto;
 import com.abbtech.dto.response.ResponseBrandDto;
 import com.abbtech.dto.response.ResponseItemDto;
 import com.abbtech.service.BrandService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,13 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/brands")
+@RequiredArgsConstructor
 public class BrandController {
 
     private final BrandService brandService;
-
-    public BrandController(BrandService brandService) {
-        this.brandService = brandService;
-    }
 
     @GetMapping
     public List<ResponseBrandDto> getAll() {
@@ -40,6 +38,11 @@ public class BrandController {
         return brandService.updateById(id, request);
     }
 
+    @PutMapping("/bulk")
+    public List<ResponseBrandDto> bulkUpdate(@RequestBody List<RequestBrandDto> requests) {
+        return brandService.bulkUpdate(requests);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
@@ -52,4 +55,3 @@ public class BrandController {
         return brandService.getItemsByBrand(id);
     }
 }
-

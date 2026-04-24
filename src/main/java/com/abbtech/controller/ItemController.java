@@ -3,6 +3,7 @@ package com.abbtech.controller;
 import com.abbtech.dto.request.RequestItemDto;
 import com.abbtech.dto.response.ResponseItemDto;
 import com.abbtech.service.ItemService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,13 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/items")
+@RequiredArgsConstructor
 public class ItemController {
 
     private final ItemService itemService;
-
-    public ItemController(ItemService itemService) {
-        this.itemService = itemService;
-    }
 
 
     @GetMapping
@@ -35,28 +33,23 @@ public class ItemController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseItemDto add(@RequestBody RequestItemDto request) {
         return itemService.add(request);
     }
 
-    @PostMapping("/all")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void saveAll(@RequestBody List<RequestItemDto> request) {
-        itemService.saveAll(request);
+    @PutMapping("/bulk")
+    public List<ResponseItemDto> bulkUpdate(@RequestBody List<RequestItemDto> request) {
+        return itemService.bulkUpdate(request);
     }
 
-    @PutMapping("/{name}")
-    public ResponseItemDto updateByName(@PathVariable String name, @RequestBody RequestItemDto request) {
-        return itemService.updateByName(name, request);
-    }
-
-    @PatchMapping("/{name}")
-    public ResponseItemDto partialUpdateByName(@PathVariable String name, @RequestParam String itemDescription) {
-
-        return itemService.partialUpdateByName(name, itemDescription);
+    @PutMapping("/{id}")
+    public ResponseItemDto updateById(@PathVariable Long id, @RequestBody RequestItemDto request) {
+        return itemService.updateById(id, request);
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         itemService.deleteById(id);
     }

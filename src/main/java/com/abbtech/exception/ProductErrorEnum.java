@@ -21,7 +21,9 @@ public enum ProductErrorEnum implements BaseErrorService {
     PRODUCT_PRISE_NOT_ALLOWED("PRODUCT_PRISE_NOT_ALLOWED-0002", "PRODUCT_PRISE_NOT_ALLOWED", 400),
 
 
-    BRAND_NOT_FOUND("BRAND_NOT_FOUND-ERROR-0003", "BRAND_NOT_FOUND", 400);
+    BRAND_NOT_FOUND("BRAND_NOT_FOUND-ERROR-0003", "BRAND_NOT_FOUND", 400),
+
+    CATEGORY_NOT_FOUND("CATEGORY_NOT_FOUND-ERROR-0004", "CATEGORY_NOT_FOUND", 400);
 
 
     /**
@@ -82,4 +84,3 @@ public enum ProductErrorEnum implements BaseErrorService {
         return errorCode;
     }
 }
-

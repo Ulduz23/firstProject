@@ -14,15 +14,13 @@ import com.abbtech.exception.ProductException;
 import com.abbtech.model.Brand;
 import com.abbtech.repository.BrandRepository;
 import com.abbtech.service.BrandService;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
-
-    public BrandServiceImpl(BrandRepository brandRepository) {
-        this.brandRepository = brandRepository;
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -53,12 +51,16 @@ public class BrandServiceImpl implements BrandService {
     @Transactional
     public ResponseBrandDto updateById(Long id, RequestBrandDto request) {
         Brand existingBrand = findBrandByIdOrThrow(id);
-        existingBrand.setName(request.getName());
-        existingBrand.setDescription(request.getDescription());
-        existingBrand.setImage(request.getImage());
-        existingBrand.setIsActive(request.getIsActive());
-        existingBrand.setIsDeleted(request.getIsDeleted());
+        applyRequest(existingBrand, request);
         return toResponseDto(brandRepository.save(existingBrand));
+    }
+
+    @Override
+    @Transactional
+    public List<ResponseBrandDto> bulkUpdate(List<RequestBrandDto> requests) {
+        return requests.stream()
+                .map(request -> updateById(request.getId(), request))
+                .toList();
     }
 
     @Override
@@ -71,41 +73,35 @@ public class BrandServiceImpl implements BrandService {
     @Transactional(readOnly = true)
     public List<ResponseItemDto> getItemsByBrand(Long brandId) {
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new ProductException(ProductErrorEnum.BRAND_NOT_FOUND));
-
-        var brands = brandRepository.findAllById(List.of(1L, 2L, 3L));
-
-        List<ResponseItemDto> itemsOfAllBrands = new ArrayList<>();
-
-        for (Brand brand1 : brands) {
-
-            var items = brand1.getItems();
-
-            itemsOfAllBrands.addAll(items.stream().map(item -> new ResponseItemDto(
-                            item.getId() == null ? null : item.getId().longValue(),
-                            item.getName(),
-                            item.getPrice(),
-                            item.getImage(),
-                            item.getDescription()))
-                    .toList());
-        }
-
-
-        return itemsOfAllBrands;
+        return new ArrayList<>(brand.getItems().stream()
+                .map(item -> new ResponseItemDto(
+                        item.getId(),
+                        item.getName(),
+                        item.getPrice(),
+                        item.getImage(),
+                        item.getDescription(),
+                        item.getBrand() == null ? null : item.getBrand().getId(),
+                        item.getCategory() == null ? null : item.getCategory().getId()))
+                .toList());
     }
 
     private Brand findBrandByIdOrThrow(Long id) {
         return brandRepository.findById(id)
-                .orElseThrow(() -> new ProductException(ProductErrorEnum.ITEM_NOT_FOUND));
+                .orElseThrow(() -> new ProductException(ProductErrorEnum.BRAND_NOT_FOUND));
     }
 
     private Brand toBrand(RequestBrandDto request) {
         Brand brand = new Brand();
+        applyRequest(brand, request);
+        return brand;
+    }
+
+    private void applyRequest(Brand brand, RequestBrandDto request) {
         brand.setName(request.getName());
         brand.setDescription(request.getDescription());
         brand.setImage(request.getImage());
-        brand.setIsActive(request.getIsActive());
-        brand.setIsDeleted(request.getIsDeleted());
-        return brand;
+        brand.setIsActive(request.getIsActive() == null ? Boolean.TRUE : request.getIsActive());
+        brand.setIsDeleted(request.getIsDeleted() == null ? Boolean.FALSE : request.getIsDeleted());
     }
 
     private ResponseBrandDto toResponseDto(Brand brand) {
@@ -121,4 +117,3 @@ public class BrandServiceImpl implements BrandService {
         );
     }
 }
-

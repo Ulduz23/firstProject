@@ -1,18 +1,20 @@
 package com.abbtech.service;
 
-import com.abbtech.model.Category;
+import com.abbtech.dto.request.RequestCategoryDto;
+import com.abbtech.dto.response.ResponseCategoryDto;
 
 import java.util.List;
 
 public interface CategoryService {
-    List<Category> getAll();
+    List<ResponseCategoryDto> getAll();
 
-    Category getById(Long id);
+    ResponseCategoryDto getById(Long id);
 
-    Category add(Category category);
+    ResponseCategoryDto add(RequestCategoryDto category);
 
-    Category updateById(Long id, Category category);
+    ResponseCategoryDto updateById(Long id, RequestCategoryDto category);
+
+    List<ResponseCategoryDto> bulkUpdate(List<RequestCategoryDto> categories);
 
     void deleteById(Long id);
 }
-

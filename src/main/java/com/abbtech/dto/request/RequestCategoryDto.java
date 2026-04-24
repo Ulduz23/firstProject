@@ -1,8 +1,5 @@
 package com.abbtech.dto.request;
 
-
-import java.math.BigDecimal;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,12 +7,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestItemDto {
+public class RequestCategoryDto {
     private Long id;
     private String name;
-    private BigDecimal price;
-    private String image;
     private String description;
-    private Long brandId;
-    private Long categoryId;
+    private String image;
+    private Integer parentId;
+    private Integer categoryOrder;
+    private Boolean isActive;
+    private Boolean isDeleted;
 }

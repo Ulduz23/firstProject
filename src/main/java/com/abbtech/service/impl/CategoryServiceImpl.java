@@ -1,66 +1,96 @@
 package com.abbtech.service.impl;
 
+import com.abbtech.dto.request.RequestCategoryDto;
+import com.abbtech.dto.response.ResponseCategoryDto;
 import com.abbtech.exception.ProductErrorEnum;
 import com.abbtech.exception.ProductException;
 import com.abbtech.model.Category;
 import com.abbtech.repository.CategoryRepository;
 import com.abbtech.service.CategoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResponseCategoryDto> getAll() {
+        return categoryRepository.findAll().stream()
+                .map(this::toResponseDto)
+                .toList();
     }
 
     @Override
-    public List<Category> getAll() {
-        return categoryRepository.findAll();
-    }
-
-    @Override
-    public Category getById(Long id) {
-        return categoryRepository.findById(id)
-                .orElseThrow(() -> new ProductException(ProductErrorEnum.ITEM_NOT_FOUND));
-    }
-
-    @Override
-    @Transactional
-    public Category add(Category category) {
-        if (category.getCategoryOrder() == null) {
-            category.setCategoryOrder(1);
-        }
-        if (category.getIsActive() == null) {
-            category.setIsActive(true);
-        }
-        if (category.getIsDeleted() == null) {
-            category.setIsDeleted(false);
-        }
-        categoryRepository.save(category);
-        return category;
+    @Transactional(readOnly = true)
+    public ResponseCategoryDto getById(Long id) {
+        return toResponseDto(findCategoryByIdOrThrow(id));
     }
 
     @Override
     @Transactional
-    public Category updateById(Long id, Category category) {
-//        getById(id);
-//        categoryRepository.updateById(id, category);
-//        category.setId(id == null ? null : id.intValue());
-//        return category;
+    public ResponseCategoryDto add(RequestCategoryDto request) {
+        Category category = new Category();
+        applyRequest(category, request);
+        return toResponseDto(categoryRepository.save(category));
+    }
 
-        return null;
+    @Override
+    @Transactional
+    public ResponseCategoryDto updateById(Long id, RequestCategoryDto request) {
+        Category category = findCategoryByIdOrThrow(id);
+        applyRequest(category, request);
+        return toResponseDto(categoryRepository.save(category));
+    }
+
+    @Override
+    @Transactional
+    public List<ResponseCategoryDto> bulkUpdate(List<RequestCategoryDto> categories) {
+        return categories.stream()
+                .map(category -> updateById(category.getId(), category))
+                .toList();
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) {
+        findCategoryByIdOrThrow(id);
         categoryRepository.deleteById(id);
     }
-}
 
+    private Category findCategoryByIdOrThrow(Long id) {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new ProductException(ProductErrorEnum.CATEGORY_NOT_FOUND));
+    }
+
+    private void applyRequest(Category category, RequestCategoryDto request) {
+        category.setName(request.getName());
+        category.setDescription(request.getDescription());
+        category.setImage(request.getImage());
+        category.setParentId(request.getParentId());
+        category.setCategoryOrder(request.getCategoryOrder() == null ? 1 : request.getCategoryOrder());
+        category.setIsActive(request.getIsActive() == null ? Boolean.TRUE : request.getIsActive());
+        category.setIsDeleted(request.getIsDeleted() == null ? Boolean.FALSE : request.getIsDeleted());
+    }
+
+    private ResponseCategoryDto toResponseDto(Category category) {
+        return new ResponseCategoryDto(
+                category.getId(),
+                category.getName(),
+                category.getDescription(),
+                category.getImage(),
+                category.getParentId(),
+                category.getCategoryOrder(),
+                category.getIsActive(),
+                category.getIsDeleted(),
+                category.getCreatedAt(),
+                category.getUpdatedAt()
+        );
+    }
+}

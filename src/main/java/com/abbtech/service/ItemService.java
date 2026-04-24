@@ -8,7 +8,7 @@ import java.util.List;
 public interface ItemService {
     ResponseItemDto add(RequestItemDto request);
 
-    void saveAll(List<RequestItemDto> request);
+    List<ResponseItemDto> bulkUpdate(List<RequestItemDto> request);
 
     List<ResponseItemDto> getAll();
 
@@ -16,9 +16,7 @@ public interface ItemService {
 
     void deleteById(Long id);
 
-    ResponseItemDto updateByName(String name, RequestItemDto requestItemDto);
+    ResponseItemDto updateById(Long id, RequestItemDto requestItemDto);
 
     List<ResponseItemDto> getPriceRange(double min, double max);
-
-    ResponseItemDto partialUpdateByName(String name, String itemDescription);
 }

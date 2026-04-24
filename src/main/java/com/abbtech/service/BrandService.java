@@ -15,9 +15,10 @@ public interface BrandService {
 
     ResponseBrandDto updateById(Long id, RequestBrandDto request);
 
+    List<ResponseBrandDto> bulkUpdate(List<RequestBrandDto> requests);
+
     void deleteById(Long id);
 
     List<ResponseItemDto> getItemsByBrand(Long brandId);
 
 }
-
