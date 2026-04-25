@@ -15,6 +15,6 @@ public class ResponseItemDto {
     private BigDecimal price;
     private String image;
     private String description;
-    private Long brandId;
-    private Long categoryId;
+    private RelatedEntityDto brand;
+    private RelatedEntityDto category;
 }

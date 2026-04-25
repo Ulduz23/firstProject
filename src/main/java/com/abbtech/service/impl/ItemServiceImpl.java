@@ -1,9 +1,12 @@
 package com.abbtech.service.impl;
 
 import com.abbtech.dto.request.RequestItemDto;
+import com.abbtech.dto.response.RelatedEntityDto;
 import com.abbtech.dto.response.ResponseItemDto;
 import com.abbtech.exception.ProductErrorEnum;
 import com.abbtech.exception.ProductException;
+import com.abbtech.model.Brand;
+import com.abbtech.model.Category;
 import com.abbtech.model.Item;
 import com.abbtech.repository.BrandRepository;
 import com.abbtech.repository.CategoryRepository;
@@ -112,9 +115,25 @@ public class ItemServiceImpl implements ItemService {
                 item.getPrice(),
                 item.getImage(),
                 item.getDescription(),
-                item.getBrand() == null ? null : item.getBrand().getId(),
-                item.getCategory() == null ? null : item.getCategory().getId()
+                toRelatedEntityDto(item.getBrand()),
+                toRelatedEntityDto(item.getCategory())
         );
+    }
+
+    private RelatedEntityDto toRelatedEntityDto(Brand brand) {
+        if (brand == null) {
+            return null;
+        }
+
+        return new RelatedEntityDto(brand.getId(), brand.getName());
+    }
+
+    private RelatedEntityDto toRelatedEntityDto(Category category) {
+        if (category == null) {
+            return null;
+        }
+
+        return new RelatedEntityDto(category.getId(), category.getName());
     }
 
 }
