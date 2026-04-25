@@ -15,6 +15,7 @@ import com.abbtech.exception.ProductException;
 import com.abbtech.model.Brand;
 import com.abbtech.model.Category;
 import com.abbtech.repository.BrandRepository;
+import com.abbtech.repository.ItemRepository;
 import com.abbtech.service.BrandService;
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
+    private final ItemRepository itemRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -68,7 +70,9 @@ public class BrandServiceImpl implements BrandService {
     @Override
     @Transactional
     public void deleteById(Long id) {
-        brandRepository.deleteById(id);
+        Brand brand = findBrandByIdOrThrow(id);
+        itemRepository.deleteByBrand_Id(id);
+        brandRepository.delete(brand);
     }
 
     @Override

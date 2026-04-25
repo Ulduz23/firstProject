@@ -6,6 +6,7 @@ import com.abbtech.exception.ProductErrorEnum;
 import com.abbtech.exception.ProductException;
 import com.abbtech.model.Category;
 import com.abbtech.repository.CategoryRepository;
+import com.abbtech.repository.ItemRepository;
 import com.abbtech.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ItemRepository itemRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -60,8 +62,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteById(Long id) {
-        findCategoryByIdOrThrow(id);
-        categoryRepository.deleteById(id);
+        Category category = findCategoryByIdOrThrow(id);
+        itemRepository.deleteByCategory_Id(id);
+        categoryRepository.delete(category);
     }
 
     private Category findCategoryByIdOrThrow(Long id) {

@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -50,11 +51,6 @@ public class Brand {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "brand", fetch = FetchType.EAGER)
-    private List<Item> items;
+    private List<Item> items = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(name = "item"
-            , joinColumns = @JoinColumn(name = "brand_id", table = "brand", foreignKey = @ForeignKey(name = "fk_brand_category"))
-            , inverseJoinColumns = @JoinColumn(name = "category_id", table = "category", foreignKey = @ForeignKey(name = "fk_category_brand")))
-    private List<Category> categories;
 }
