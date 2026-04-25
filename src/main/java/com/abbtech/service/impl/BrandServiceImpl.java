@@ -63,7 +63,7 @@ public class BrandServiceImpl implements BrandService {
     @Transactional
     public List<ResponseBrandDto> bulkUpdate(List<RequestBrandDto> requests) {
         return requests.stream()
-                .map(request -> updateById(request.getId(), request))
+                .map(request -> updateById(request.id(), request))
                 .toList();
     }
 
@@ -103,11 +103,11 @@ public class BrandServiceImpl implements BrandService {
     }
 
     private void applyRequest(Brand brand, RequestBrandDto request) {
-        brand.setName(request.getName());
-        brand.setDescription(request.getDescription());
-        brand.setImage(request.getImage());
-        brand.setIsActive(request.getIsActive() == null ? Boolean.TRUE : request.getIsActive());
-        brand.setIsDeleted(request.getIsDeleted() == null ? Boolean.FALSE : request.getIsDeleted());
+        brand.setName(request.name());
+        brand.setDescription(request.description());
+        brand.setImage(request.image());
+        brand.setIsActive(request.isActive() == null ? Boolean.TRUE : request.isActive());
+        brand.setIsDeleted(request.isDeleted() == null ? Boolean.FALSE : request.isDeleted());
     }
 
     private ResponseBrandDto toResponseDto(Brand brand) {

@@ -4,6 +4,8 @@ import com.abbtech.dto.request.RequestBrandDto;
 import com.abbtech.dto.response.ResponseBrandDto;
 import com.abbtech.dto.response.ResponseItemDto;
 import com.abbtech.service.BrandService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -29,17 +31,17 @@ public class BrandController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseBrandDto add(@RequestBody RequestBrandDto request) {
+    public ResponseBrandDto add(@RequestBody @Valid RequestBrandDto request) {
         return brandService.add(request);
     }
 
     @PutMapping("/{id}")
-    public ResponseBrandDto updateById(@PathVariable Long id, @RequestBody RequestBrandDto request) {
+    public ResponseBrandDto updateById(@PathVariable Long id, @RequestBody @Valid RequestBrandDto request) {
         return brandService.updateById(id, request);
     }
 
     @PutMapping("/bulk")
-    public List<ResponseBrandDto> bulkUpdate(@RequestBody List<RequestBrandDto> requests) {
+    public List<ResponseBrandDto> bulkUpdate(@RequestBody List<@Valid RequestBrandDto> requests) {
         return brandService.bulkUpdate(requests);
     }
 

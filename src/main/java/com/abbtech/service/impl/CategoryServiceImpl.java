@@ -55,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public List<ResponseCategoryDto> bulkUpdate(List<RequestCategoryDto> categories) {
         return categories.stream()
-                .map(category -> updateById(category.getId(), category))
+                .map(category -> updateById(category.id(), category))
                 .toList();
     }
 
@@ -73,13 +73,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private void applyRequest(Category category, RequestCategoryDto request) {
-        category.setName(request.getName());
-        category.setDescription(request.getDescription());
-        category.setImage(request.getImage());
-        category.setParentId(request.getParentId());
-        category.setCategoryOrder(request.getCategoryOrder() == null ? 1 : request.getCategoryOrder());
-        category.setIsActive(request.getIsActive() == null ? Boolean.TRUE : request.getIsActive());
-        category.setIsDeleted(request.getIsDeleted() == null ? Boolean.FALSE : request.getIsDeleted());
+        category.setName(request.name());
+        category.setDescription(request.description());
+        category.setImage(request.image());
+        category.setParentId(request.parentId());
+        category.setCategoryOrder(request.categoryOrder() == null ? 1 : request.categoryOrder());
+        category.setIsActive(request.isActive() == null ? Boolean.TRUE : request.isActive());
+        category.setIsDeleted(request.isDeleted() == null ? Boolean.FALSE : request.isDeleted());
     }
 
     private ResponseCategoryDto toResponseDto(Category category) {

@@ -3,6 +3,7 @@ package com.abbtech.controller;
 import com.abbtech.dto.request.RequestItemDto;
 import com.abbtech.dto.response.ResponseItemDto;
 import com.abbtech.service.ItemService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -34,17 +35,17 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseItemDto add(@RequestBody RequestItemDto request) {
+    public ResponseItemDto add(@RequestBody @Valid RequestItemDto request) {
         return itemService.add(request);
     }
 
     @PutMapping("/bulk")
-    public List<ResponseItemDto> bulkUpdate(@RequestBody List<RequestItemDto> request) {
+    public List<ResponseItemDto> bulkUpdate(@RequestBody List<@Valid RequestItemDto> request) {
         return itemService.bulkUpdate(request);
     }
 
     @PutMapping("/{id}")
-    public ResponseItemDto updateById(@PathVariable Long id, @RequestBody RequestItemDto request) {
+    public ResponseItemDto updateById(@PathVariable Long id, @RequestBody @Valid RequestItemDto request) {
         return itemService.updateById(id, request);
     }
 

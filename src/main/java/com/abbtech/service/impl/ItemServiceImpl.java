@@ -39,7 +39,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public List<ResponseItemDto> bulkUpdate(List<RequestItemDto> requestItems) {
         return requestItems.stream()
-                .map(item -> updateById(item.getId(), item))
+                .map(item -> updateById(item.id(), item))
                 .toList();
     }
 
@@ -86,22 +86,22 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void applyRequest(Item item, RequestItemDto request) {
-        item.setName(request.getName());
-        item.setPrice(request.getPrice());
-        item.setImage(request.getImage());
-        item.setDescription(request.getDescription());
+        item.setName(request.name());
+        item.setPrice(request.price());
+        item.setImage(request.image());
+        item.setDescription(request.description());
         item.setIsActive(Boolean.TRUE);
         item.setIsDeleted(Boolean.FALSE);
 
-        if (request.getBrandId() != null) {
-            item.setBrand(brandRepository.findById(request.getBrandId())
+        if (request.brandId() != null) {
+            item.setBrand(brandRepository.findById(request.brandId())
                     .orElseThrow(() -> new ProductException(ProductErrorEnum.BRAND_NOT_FOUND)));
         } else {
             item.setBrand(null);
         }
 
-        if (request.getCategoryId() != null) {
-            item.setCategory(categoryRepository.findById(request.getCategoryId())
+        if (request.categoryId() != null) {
+            item.setCategory(categoryRepository.findById(request.categoryId())
                     .orElseThrow(() -> new ProductException(ProductErrorEnum.CATEGORY_NOT_FOUND)));
         } else {
             item.setCategory(null);
