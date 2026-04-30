@@ -7,8 +7,11 @@ import com.abbtech.dto.response.ResponseItemDto;
 import com.abbtech.service.BrandService;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,45 +26,52 @@ public class BrandController {
     private final BrandService brandService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE')")
     public PageResponseDto<ResponseBrandDto> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Positive int size) {
         return brandService.getAll(page, size);
     }
 
     @GetMapping("/{id}")
-    public ResponseBrandDto getById(@PathVariable Long id) {
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE')")
+    public ResponseBrandDto getById(@PathVariable @Positive Long id) {
         return brandService.getById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('WRITE_PRIVILEGE')")
     public ResponseBrandDto add(@RequestBody @Valid RequestBrandDto request) {
         return brandService.add(request);
     }
 
     @PutMapping("/{id}")
-    public ResponseBrandDto updateById(@PathVariable Long id, @RequestBody @Valid RequestBrandDto request) {
+    @PreAuthorize("hasAuthority('UPDATE_PRIVILEGE')")
+    public ResponseBrandDto updateById(@PathVariable @Positive Long id, @RequestBody @Valid RequestBrandDto request) {
         return brandService.updateById(id, request);
     }
 
     @PutMapping("/bulk")
+    @PreAuthorize("hasAuthority('UPDATE_PRIVILEGE')")
     public List<ResponseBrandDto> bulkUpdate(@RequestBody List<@Valid RequestBrandDto> requests) {
         return brandService.bulkUpdate(requests);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable Long id) {
+    @PreAuthorize("hasAuthority('DELETE_PRIVILEGE')")
+    public void deleteById(@PathVariable @Positive Long id) {
         brandService.deleteById(id);
     }
 
 
     @GetMapping("/{id}/items")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE')")
     public PageResponseDto<ResponseItemDto> getItemsByBrand(
-            @PathVariable Long id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable @Positive Long id,
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Positive int size) {
         return brandService.getItemsByBrand(id, page, size);
     }
 }

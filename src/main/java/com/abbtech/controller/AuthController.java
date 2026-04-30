@@ -9,16 +9,19 @@ import com.abbtech.service.security.JwtService;
 import com.abbtech.service.security.RegisterService;
 import com.abbtech.service.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Validated
 public class AuthController {
 
     private final AuthenticationManager manager;
@@ -27,7 +30,7 @@ public class AuthController {
     private final UserDetailsServiceImpl userDetailsService;
 
     @PostMapping("/login")
-    public TokenResponseDto login(@RequestBody LoginRequestDto req) {
+    public TokenResponseDto login(@RequestBody @Valid LoginRequestDto req) {
         Authentication auth =
                 manager.authenticate(new UsernamePasswordAuthenticationToken(req.username(), req.password()));
         UserDetails user = (UserDetails) auth.getPrincipal();
@@ -36,7 +39,7 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public void register(@RequestBody RegisterRequestDto req) {
+    public void register(@RequestBody @Valid RegisterRequestDto req) {
         registerService.register(req);
     }
 
