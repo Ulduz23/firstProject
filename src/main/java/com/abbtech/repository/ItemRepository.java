@@ -1,5 +1,7 @@
 package com.abbtech.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +14,9 @@ import java.util.Optional;
 public interface ItemRepository  extends JpaRepository<Item, Long> {
     Optional<Item> findByName(String name);
 
-    List<Item> findByPriceBetween(BigDecimal min, BigDecimal max);
+    Page<Item> findByPriceBetween(BigDecimal min, BigDecimal max, Pageable pageable);
+
+    Page<Item> findByBrand_Id(Long brandId, Pageable pageable);
 
     @Transactional
     void deleteByBrand_Id(Long brandId);

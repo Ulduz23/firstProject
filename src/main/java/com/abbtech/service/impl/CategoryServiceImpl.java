@@ -1,6 +1,7 @@
 package com.abbtech.service.impl;
 
 import com.abbtech.dto.request.RequestCategoryDto;
+import com.abbtech.dto.response.PageResponseDto;
 import com.abbtech.dto.response.ResponseCategoryDto;
 import com.abbtech.exception.ProductErrorEnum;
 import com.abbtech.exception.ProductException;
@@ -9,6 +10,8 @@ import com.abbtech.repository.CategoryRepository;
 import com.abbtech.repository.ItemRepository;
 import com.abbtech.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +26,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ResponseCategoryDto> getAll() {
-        return categoryRepository.findAll().stream()
-                .map(this::toResponseDto)
-                .toList();
+    public PageResponseDto<ResponseCategoryDto> getAll(int page, int size) {
+        return PageResponseDto.from(categoryRepository.findAll(PageRequest.of(page, size, Sort.by("id").ascending()))
+                .map(this::toResponseDto));
     }
 
     @Override

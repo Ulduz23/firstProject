@@ -3,10 +3,13 @@ package com.abbtech.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.abbtech.dto.request.RequestBrandDto;
+import com.abbtech.dto.response.PageResponseDto;
 import com.abbtech.dto.response.RelatedEntityDto;
 import com.abbtech.dto.response.ResponseBrandDto;
 import com.abbtech.dto.response.ResponseItemDto;
@@ -28,11 +31,9 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ResponseBrandDto> getAll() {
-        var brands = brandRepository.findAll();
-        return brands.stream()
-                .map(this::toResponseDto)
-                .toList();
+    public PageResponseDto<ResponseBrandDto> getAll(int page, int size) {
+        var brands = brandRepository.findAll(PageRequest.of(page, size, Sort.by("id").ascending()));
+        return PageResponseDto.from(brands.map(this::toResponseDto));
     }
 
     @Override
@@ -77,18 +78,17 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ResponseItemDto> getItemsByBrand(Long brandId) {
-        Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new ProductException(ProductErrorEnum.BRAND_NOT_FOUND));
-        return new ArrayList<>(brand.getItems().stream()
-                .map(item -> new ResponseItemDto(
-                        item.getId(),
-                        item.getName(),
-                        item.getPrice(),
-                        item.getImage(),
-                        item.getDescription(),
-                        toRelatedEntityDto(item.getBrand()),
-                        toRelatedEntityDto(item.getCategory())))
-                .toList());
+    public PageResponseDto<ResponseItemDto> getItemsByBrand(Long brandId, int page, int size) {
+        findBrandByIdOrThrow(brandId);
+        var items = itemRepository.findByBrand_Id(brandId, PageRequest.of(page, size, Sort.by("id").ascending()));
+        return PageResponseDto.from(items.map(item -> new ResponseItemDto(
+                item.getId(),
+                item.getName(),
+                item.getPrice(),
+                item.getImage(),
+                item.getDescription(),
+                toRelatedEntityDto(item.getBrand()),
+                toRelatedEntityDto(item.getCategory()))));
     }
 
     private Brand findBrandByIdOrThrow(Long id) {

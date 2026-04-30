@@ -1,6 +1,7 @@
 package com.abbtech.service;
 
 import com.abbtech.dto.request.RequestItemDto;
+import com.abbtech.dto.response.PageResponseDto;
 import com.abbtech.dto.response.ResponseItemDto;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface ItemService {
 
     List<ResponseItemDto> bulkUpdate(List<RequestItemDto> request);
 
-    List<ResponseItemDto> getAll();
+    PageResponseDto<ResponseItemDto> getAll(int page, int size);
 
     ResponseItemDto getById(Long id);
 
@@ -18,5 +19,5 @@ public interface ItemService {
 
     ResponseItemDto updateById(Long id, RequestItemDto requestItemDto);
 
-    List<ResponseItemDto> getPriceRange(double min, double max);
+    PageResponseDto<ResponseItemDto> getPriceRange(double min, double max, int page, int size);
 }

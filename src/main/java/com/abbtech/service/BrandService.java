@@ -1,13 +1,14 @@
 package com.abbtech.service;
 
 import com.abbtech.dto.request.RequestBrandDto;
+import com.abbtech.dto.response.PageResponseDto;
 import com.abbtech.dto.response.ResponseBrandDto;
 import com.abbtech.dto.response.ResponseItemDto;
 
 import java.util.List;
 
 public interface BrandService {
-    List<ResponseBrandDto> getAll();
+    PageResponseDto<ResponseBrandDto> getAll(int page, int size);
 
     ResponseBrandDto getById(Long id);
 
@@ -19,6 +20,6 @@ public interface BrandService {
 
     void deleteById(Long id);
 
-    List<ResponseItemDto> getItemsByBrand(Long brandId);
+    PageResponseDto<ResponseItemDto> getItemsByBrand(Long brandId, int page, int size);
 
 }

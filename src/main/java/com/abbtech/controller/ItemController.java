@@ -1,11 +1,13 @@
 package com.abbtech.controller;
 
 import com.abbtech.dto.request.RequestItemDto;
+import com.abbtech.dto.response.PageResponseDto;
 import com.abbtech.dto.response.ResponseItemDto;
 import com.abbtech.service.ItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,14 +15,18 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/items")
 @RequiredArgsConstructor
+@Validated
 public class ItemController {
 
     private final ItemService itemService;
 
 
     @GetMapping
-    public List<ResponseItemDto> getAll(@RequestHeader(value = "x-custom-header", required = false) String customHeader) {
-        return itemService.getAll();
+    public PageResponseDto<ResponseItemDto> getAll(
+            @RequestHeader(value = "x-custom-header", required = false) String customHeader,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return itemService.getAll(page, size);
     }
 
     @GetMapping("/{id}")
@@ -29,8 +35,12 @@ public class ItemController {
     }
 
     @GetMapping("/filter")
-    public List<ResponseItemDto> getPriceRange(@RequestParam double min, @RequestParam double max) {
-        return itemService.getPriceRange(min, max);
+    public PageResponseDto<ResponseItemDto> getPriceRange(
+            @RequestParam double min,
+            @RequestParam double max,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return itemService.getPriceRange(min, max, page, size);
     }
 
     @PostMapping

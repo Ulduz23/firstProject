@@ -1,6 +1,7 @@
 package com.abbtech.service.impl;
 
 import com.abbtech.dto.request.RequestItemDto;
+import com.abbtech.dto.response.PageResponseDto;
 import com.abbtech.dto.response.RelatedEntityDto;
 import com.abbtech.dto.response.ResponseItemDto;
 import com.abbtech.exception.ProductErrorEnum;
@@ -13,6 +14,8 @@ import com.abbtech.repository.CategoryRepository;
 import com.abbtech.repository.ItemRepository;
 import com.abbtech.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,10 +48,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ResponseItemDto> getAll() {
-        return itemRepository.findAll().stream()
-                .map(this::toResponseDto)
-                .toList();
+    public PageResponseDto<ResponseItemDto> getAll(int page, int size) {
+        return PageResponseDto.from(itemRepository.findAll(PageRequest.of(page, size, Sort.by("id").ascending()))
+                .map(this::toResponseDto));
     }
 
     @Override
@@ -74,10 +76,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ResponseItemDto> getPriceRange(double min, double max) {
-        return itemRepository.findByPriceBetween(BigDecimal.valueOf(min), BigDecimal.valueOf(max)).stream()
-                .map(this::toResponseDto)
-                .toList();
+    public PageResponseDto<ResponseItemDto> getPriceRange(double min, double max, int page, int size) {
+        return PageResponseDto.from(itemRepository.findByPriceBetween(
+                        BigDecimal.valueOf(min),
+                        BigDecimal.valueOf(max),
+                        PageRequest.of(page, size, Sort.by("id").ascending()))
+                .map(this::toResponseDto));
     }
 
     private Item findItemByIdOrThrow(Long id) {

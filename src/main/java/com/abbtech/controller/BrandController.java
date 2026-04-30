@@ -1,6 +1,7 @@
 package com.abbtech.controller;
 
 import com.abbtech.dto.request.RequestBrandDto;
+import com.abbtech.dto.response.PageResponseDto;
 import com.abbtech.dto.response.ResponseBrandDto;
 import com.abbtech.dto.response.ResponseItemDto;
 import com.abbtech.service.BrandService;
@@ -8,6 +9,7 @@ import com.abbtech.service.BrandService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,13 +17,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/brands")
 @RequiredArgsConstructor
+@Validated
 public class BrandController {
 
     private final BrandService brandService;
 
     @GetMapping
-    public List<ResponseBrandDto> getAll() {
-        return brandService.getAll();
+    public PageResponseDto<ResponseBrandDto> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return brandService.getAll(page, size);
     }
 
     @GetMapping("/{id}")
@@ -53,7 +58,10 @@ public class BrandController {
 
 
     @GetMapping("/{id}/items")
-    public List<ResponseItemDto> getItemsByBrand(@PathVariable Long id) {
-        return brandService.getItemsByBrand(id);
+    public PageResponseDto<ResponseItemDto> getItemsByBrand(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return brandService.getItemsByBrand(id, page, size);
     }
 }
