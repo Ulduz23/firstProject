@@ -1,3 +1,9 @@
 databaseChangeLog:
-  - includeAll:
-      path: db/changelog/v-0.1/
+  - include:
+      file: db/changelog/v-0.1/2026-04-25-create-brand.yaml
+  - include:
+      file: db/changelog/v-0.1/2026-04-25-create-category.yaml
+  - include:
+      file: db/changelog/v-0.1/2026-04-25-create-item.yaml
+  - include:
+      file: db/changelog/v-0.1/tbl-security/20260123-1-tbl-security.yaml

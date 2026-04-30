@@ -25,3 +25,15 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-main.yaml
     default-schema: public
+
+security:
+  public-urls:
+    - /auth/**
+    - /swagger-ui/**
+    - /auth/login
+    - /auth/register
+    - /auth/refresh
+  jwt:
+    secret: ${JWT_SECRET:01234567890123456789012345678901}
+    access-exp: 360000
+    refresh-exp: 420000
