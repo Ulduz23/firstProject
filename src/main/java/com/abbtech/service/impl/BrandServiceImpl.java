@@ -1,6 +1,5 @@
 package com.abbtech.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -8,6 +7,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.abbtech.annotation.CustomTransactionAnnotation;
+import com.abbtech.annotation.full.FullValueAnnotation;
+import com.abbtech.annotation.marked.MarkedAnnotation;
+import com.abbtech.annotation.singlevalue.SingleValueAnnotation;
+import com.abbtech.annotation.typed.TypedAnnotation;
 import com.abbtech.dto.request.RequestBrandDto;
 import com.abbtech.dto.response.PageResponseDto;
 import com.abbtech.dto.response.RelatedEntityDto;
@@ -20,10 +24,14 @@ import com.abbtech.model.Category;
 import com.abbtech.repository.BrandRepository;
 import com.abbtech.repository.ItemRepository;
 import com.abbtech.service.BrandService;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
+@TypedAnnotation(returnType = "PageResponseDto<ResponseBrandDto>")
 public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
@@ -31,13 +39,16 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional(readOnly = true)
+    @TypedAnnotation(returnType = "PageResponseDto<ResponseBrandDto>")
     public PageResponseDto<ResponseBrandDto> getAll(int page, int size) {
         var brands = brandRepository.findAll(PageRequest.of(page, size, Sort.by("id").ascending()));
+        log.debug("Returning brand page. page={}, size={}", page, size);
         return PageResponseDto.from(brands.map(this::toResponseDto));
     }
 
     @Override
     @Transactional(readOnly = true)
+    @TypedAnnotation(returnType = "ResponseBrandDto")
     public ResponseBrandDto getById(Long id) {
 
         var optionalBrand = brandRepository.findById(id);
@@ -47,6 +58,8 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
+    @MarkedAnnotation
+    @SingleValueAnnotation("1")
     public ResponseBrandDto add(RequestBrandDto request) {
         Brand brand = toBrand(request);
         return toResponseDto(brandRepository.save(brand));
@@ -54,6 +67,7 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
+    @SingleValueAnnotation("2")
     public ResponseBrandDto updateById(Long id, RequestBrandDto request) {
         Brand existingBrand = findBrandByIdOrThrow(id);
         applyRequest(existingBrand, request);
@@ -62,6 +76,7 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
+    @SingleValueAnnotation("bulk-update")
     public List<ResponseBrandDto> bulkUpdate(List<RequestBrandDto> requests) {
         return requests.stream()
                 .map(request -> updateById(request.id(), request))
@@ -70,6 +85,10 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
+    @SingleValueAnnotation("3")
+    @FullValueAnnotation(order = 1, name = "deleteById", description = "deleteById service method")
+    @TypedAnnotation(returnType = "void")
+    @CustomTransactionAnnotation
     public void deleteById(Long id) {
         Brand brand = findBrandByIdOrThrow(id);
         itemRepository.deleteByBrand_Id(id);
@@ -78,6 +97,7 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional(readOnly = true)
+    @TypedAnnotation(returnType = "PageResponseDto<ResponseItemDto>")
     public PageResponseDto<ResponseItemDto> getItemsByBrand(Long brandId, int page, int size) {
         findBrandByIdOrThrow(brandId);
         var items = itemRepository.findByBrand_Id(brandId, PageRequest.of(page, size, Sort.by("id").ascending()));

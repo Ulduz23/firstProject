@@ -4,11 +4,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,13 +15,19 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.abbtech.exception.base.BaseErrorEnum;
 import com.abbtech.exception.base.BaseErrorResponseDTO;
+import com.abbtech.exception.base.BaseException;
+
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<BaseErrorResponseDTO> handleBaseException(MethodArgumentNotValidException ex,
-                                                                    WebRequest webRequest) {
+    public ResponseEntity<BaseErrorResponseDTO> handleConstraintViolationException(MethodArgumentNotValidException ex,
+                                                                                   WebRequest webRequest) {
+
+
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
@@ -31,49 +35,18 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return new ResponseEntity<>(new BaseErrorResponseDTO(BaseErrorEnum.BASE_VALIDATION_ERROR.getErrorCode(),
-                BaseErrorEnum.BASE_VALIDATION_ERROR.getMessage(), webRequest.getContextPath(),
+                BaseErrorEnum.BASE_BUSINESS_ERROR.getMessage(), webRequest.getContextPath(),
                 LocalDateTime.now().toString(), BaseErrorEnum.BASE_VALIDATION_ERROR.getHttpStatus(), errors),
                 HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<BaseErrorResponseDTO> handleConstraintViolationException(ConstraintViolationException ex,
-                                                                                   WebRequest webRequest) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getConstraintViolations().forEach(violation ->
-                errors.put(violation.getPropertyPath().toString(), violation.getMessage()));
-
-        return new ResponseEntity<>(new BaseErrorResponseDTO(
-                BaseErrorEnum.BASE_VALIDATION_ERROR.getErrorCode(),
-                BaseErrorEnum.BASE_VALIDATION_ERROR.getMessage(),
-                webRequest.getContextPath(),
-                LocalDateTime.now().toString(),
-                BaseErrorEnum.BASE_VALIDATION_ERROR.getHttpStatus(),
-                errors), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ProductException.class)
-    public ResponseEntity<BaseErrorResponseDTO> handleBaseException(ProductException ex,
-                                                                                   WebRequest webRequest) {
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<BaseErrorResponseDTO> handleBaseException(BaseException ex,
+                                                                    WebRequest webRequest) {
+        log.error("BaseException: {}", ex.getCause().getCause().getMessage());
         return new ResponseEntity<>(new BaseErrorResponseDTO(ex.baseErrorService.getErrorCode(),
                 ex.baseErrorService.getMessage(), webRequest.getContextPath(), LocalDateTime.now().toString(),
                 ex.baseErrorService.getHttpStatus()), HttpStatusCode.valueOf(ex.baseErrorService.getHttpStatus())
         );
-    }
-
-    @ExceptionHandler(AuthException.class)
-    public ResponseEntity<BaseErrorResponseDTO> handleAuthException(AuthException ex, WebRequest webRequest) {
-        return new ResponseEntity<>(new BaseErrorResponseDTO(ex.baseErrorService.getErrorCode(),
-                ex.baseErrorService.getMessage(), webRequest.getContextPath(), LocalDateTime.now().toString(),
-                ex.baseErrorService.getHttpStatus()), HttpStatusCode.valueOf(ex.baseErrorService.getHttpStatus()));
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<BaseErrorResponseDTO> handleBadCredentialsException(BadCredentialsException ex,
-                                                                              WebRequest webRequest) {
-        return new ResponseEntity<>(new BaseErrorResponseDTO(AuthErrorEnum.INVALID_CREDENTIALS.getErrorCode(),
-                AuthErrorEnum.INVALID_CREDENTIALS.getMessage(), webRequest.getContextPath(),
-                LocalDateTime.now().toString(), AuthErrorEnum.INVALID_CREDENTIALS.getHttpStatus()),
-                HttpStatusCode.valueOf(AuthErrorEnum.INVALID_CREDENTIALS.getHttpStatus()));
     }
 }

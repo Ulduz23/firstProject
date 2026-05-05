@@ -1,5 +1,6 @@
 package com.abbtech.controller;
 
+import com.abbtech.annotation.CustomTransactionAnnotation;
 import com.abbtech.dto.request.RequestBrandDto;
 import com.abbtech.dto.response.PageResponseDto;
 import com.abbtech.dto.response.ResponseBrandDto;
@@ -27,6 +28,7 @@ public class BrandController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('READ_PRIVILEGE')")
+    @CustomTransactionAnnotation(readOnlyTrue = true)
     public PageResponseDto<ResponseBrandDto> getAll(
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "10") @Positive int size) {
@@ -35,6 +37,7 @@ public class BrandController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE')")
+    @CustomTransactionAnnotation(readOnlyTrue = true)
     public ResponseBrandDto getById(@PathVariable @Positive Long id) {
         return brandService.getById(id);
     }
@@ -42,18 +45,21 @@ public class BrandController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('WRITE_PRIVILEGE')")
+    @CustomTransactionAnnotation
     public ResponseBrandDto add(@RequestBody @Valid RequestBrandDto request) {
         return brandService.add(request);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('UPDATE_PRIVILEGE')")
+    @CustomTransactionAnnotation
     public ResponseBrandDto updateById(@PathVariable @Positive Long id, @RequestBody @Valid RequestBrandDto request) {
         return brandService.updateById(id, request);
     }
 
     @PutMapping("/bulk")
     @PreAuthorize("hasAuthority('UPDATE_PRIVILEGE')")
+    @CustomTransactionAnnotation
     public List<ResponseBrandDto> bulkUpdate(@RequestBody List<@Valid RequestBrandDto> requests) {
         return brandService.bulkUpdate(requests);
     }
@@ -61,6 +67,7 @@ public class BrandController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('DELETE_PRIVILEGE')")
+    @CustomTransactionAnnotation
     public void deleteById(@PathVariable @Positive Long id) {
         brandService.deleteById(id);
     }
@@ -68,6 +75,7 @@ public class BrandController {
 
     @GetMapping("/{id}/items")
     @PreAuthorize("hasAuthority('READ_PRIVILEGE')")
+    @CustomTransactionAnnotation(readOnlyTrue = true)
     public PageResponseDto<ResponseItemDto> getItemsByBrand(
             @PathVariable @Positive Long id,
             @RequestParam(defaultValue = "0") @Min(0) int page,
