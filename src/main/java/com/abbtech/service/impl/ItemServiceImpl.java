@@ -1,5 +1,6 @@
 package com.abbtech.service.impl;
 
+import com.abbtech.annotation.CustomTransactionAnnotation;
 import com.abbtech.dto.request.RequestItemDto;
 import com.abbtech.dto.response.PageResponseDto;
 import com.abbtech.dto.response.RelatedEntityDto;
@@ -32,6 +33,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
+    @CustomTransactionAnnotation
     public ResponseItemDto add(RequestItemDto request) {
         Item item = new Item();
         applyRequest(item, request);
@@ -40,6 +42,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
+    @CustomTransactionAnnotation
     public List<ResponseItemDto> bulkUpdate(List<RequestItemDto> requestItems) {
         return requestItems.stream()
                 .map(item -> updateById(item.id(), item))
@@ -48,6 +51,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
+    @CustomTransactionAnnotation(readOnlyTrue = true)
     public PageResponseDto<ResponseItemDto> getAll(int page, int size) {
         return PageResponseDto.from(itemRepository.findAll(PageRequest.of(page, size, Sort.by("id").ascending()))
                 .map(this::toResponseDto));
@@ -55,12 +59,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
+    @CustomTransactionAnnotation(readOnlyTrue = true)
     public ResponseItemDto getById(Long id) {
         return toResponseDto(findItemByIdOrThrow(id));
     }
 
     @Override
     @Transactional
+    @CustomTransactionAnnotation
     public void deleteById(Long id) {
         findItemByIdOrThrow(id);
         itemRepository.deleteById(id);
@@ -68,6 +74,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
+    @CustomTransactionAnnotation
     public ResponseItemDto updateById(Long id, RequestItemDto requestItemDto) {
         Item item = findItemByIdOrThrow(id);
         applyRequest(item, requestItemDto);
@@ -76,6 +83,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
+    @CustomTransactionAnnotation(readOnlyTrue = true)
     public PageResponseDto<ResponseItemDto> getPriceRange(double min, double max, int page, int size) {
         return PageResponseDto.from(itemRepository.findByPriceBetween(
                         BigDecimal.valueOf(min),

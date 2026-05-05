@@ -1,5 +1,6 @@
 package com.abbtech.service.impl;
 
+import com.abbtech.annotation.CustomTransactionAnnotation;
 import com.abbtech.dto.request.RequestCategoryDto;
 import com.abbtech.dto.response.PageResponseDto;
 import com.abbtech.dto.response.ResponseCategoryDto;
@@ -26,6 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
+    @CustomTransactionAnnotation(readOnlyTrue = true)
     public PageResponseDto<ResponseCategoryDto> getAll(int page, int size) {
         return PageResponseDto.from(categoryRepository.findAll(PageRequest.of(page, size, Sort.by("id").ascending()))
                 .map(this::toResponseDto));
@@ -33,12 +35,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
+    @CustomTransactionAnnotation(readOnlyTrue = true)
     public ResponseCategoryDto getById(Long id) {
         return toResponseDto(findCategoryByIdOrThrow(id));
     }
 
     @Override
     @Transactional
+    @CustomTransactionAnnotation
     public ResponseCategoryDto add(RequestCategoryDto request) {
         Category category = new Category();
         applyRequest(category, request);
@@ -47,6 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @CustomTransactionAnnotation
     public ResponseCategoryDto updateById(Long id, RequestCategoryDto request) {
         Category category = findCategoryByIdOrThrow(id);
         applyRequest(category, request);
@@ -55,6 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @CustomTransactionAnnotation
     public List<ResponseCategoryDto> bulkUpdate(List<RequestCategoryDto> categories) {
         return categories.stream()
                 .map(category -> updateById(category.id(), category))
@@ -63,6 +69,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @CustomTransactionAnnotation
     public void deleteById(Long id) {
         Category category = findCategoryByIdOrThrow(id);
         itemRepository.deleteByCategory_Id(id);
