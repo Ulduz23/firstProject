@@ -14,7 +14,7 @@ import com.abbtech.annotation.CustomTransactionAnnotation;
 @EnableAspectJAutoProxy
 public class MarketPlaceApplication {
 
-    static void main(String[] args) {
+    public static void main(String[] args) {
         ConfigurableApplicationContext ctx = SpringApplication.run(MarketPlaceApplication.class, args);
         var mainClass = ctx.getBean(MarketPlaceApplication.class);
         mainClass.deleteById(1L);
