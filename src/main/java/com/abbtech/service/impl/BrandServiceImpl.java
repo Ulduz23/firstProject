@@ -53,10 +53,7 @@ public class BrandServiceImpl implements BrandService {
     @TypedAnnotation(returnType = "ResponseBrandDto")
     @CustomTransactionAnnotation(readOnlyTrue = true)
     public ResponseBrandDto getById(Long id) {
-
-        var optionalBrand = brandRepository.findById(id);
-
-        return toResponseDto(optionalBrand.orElseThrow());
+        return toResponseDto(findBrandByIdOrThrow(id));
     }
 
     @Override

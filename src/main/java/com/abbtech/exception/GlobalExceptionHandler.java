@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<BaseErrorResponseDTO> handleBaseException(BaseException ex,
                                                                     WebRequest webRequest) {
-        log.error("BaseException: {}", ex.getCause().getCause().getMessage());
+        log.error("BaseException: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(new BaseErrorResponseDTO(ex.baseErrorService.getErrorCode(),
                 ex.baseErrorService.getMessage(), webRequest.getContextPath(), LocalDateTime.now().toString(),
                 ex.baseErrorService.getHttpStatus()), HttpStatusCode.valueOf(ex.baseErrorService.getHttpStatus())

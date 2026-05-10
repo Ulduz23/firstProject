@@ -2,6 +2,7 @@ package com.abbtech.security;
 
 import com.abbtech.dto.security.SecurityProperties;
 import com.abbtech.service.security.JwtService;
+import com.abbtech.service.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,16 +11,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -30,6 +29,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private final SecurityProperties props;
 
     private final JwtService jwt;
+
+    private final UserDetailsServiceImpl userDetailsService;
 
 
     @Override
@@ -63,14 +64,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
             String username = claims.getSubject();
 
-            List<String> auths = claims.get("auth", List.class);
-
-            List<GrantedAuthority> authorities = auths.stream()
-                    .map(SimpleGrantedAuthority::new)
-                    .map(a -> (GrantedAuthority) a)
-                    .toList();
-
-            Authentication auth = new UsernamePasswordAuthenticationToken(username, null, authorities);
+            UserDetails user = userDetailsService.loadUserByUsername(username);
+            Authentication auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(auth);
 
@@ -81,5 +76,3 @@ public class JwtFilter extends OncePerRequestFilter {
         chain.doFilter(req, res);
     }
 }
-
-
