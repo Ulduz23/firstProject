@@ -1,0 +1,39 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /api/iam
+
+spring:
+  application:
+    name: iam-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/iam_service?currentSchema=public
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+        format_sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-main.yaml
+    default-schema: public
+
+security:
+  public-urls:
+    - /auth/**
+    - /swagger-ui/**
+    - /auth/login
+    - /auth/register
+    - /auth/refresh
+  jwt:
+    secret: ${JWT_SECRET:01234567890123456789012345678901}
+    access-exp: 360000
+    refresh-exp: 420000
