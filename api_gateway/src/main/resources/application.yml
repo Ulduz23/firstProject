@@ -1,0 +1,36 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: iam_service_route
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/e-market/iam/**
+          filters:
+            - RewritePath=/api/e-market/iam(?<segment>/?.*), /api/iam$\{segment}
+
+        - id: product_service_route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/e-market/products/**
+          filters:
+            - RewritePath=/api/e-market/products(?<segment>/?.*), /api/product$\{segment}
+
+        - id: notification_service_route
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/e-market/notifications/**
+          filters:
+            - RewritePath=/api/e-market/notifications(?<segment>/?.*), /api/notification/notifications$\{segment}
+
+        - id: payment_service_route
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/e-market/payments/**
+          filters:
+            - RewritePath=/api/e-market/payments(?<segment>/?.*), /api/payment/payments$\{segment}
