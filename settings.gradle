@@ -2,3 +2,4 @@ rootProject.name = 'firstProject'
 
 include 'iam_service'
 include 'product_service'
+include 'notification_service'
