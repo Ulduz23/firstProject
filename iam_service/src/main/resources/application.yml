@@ -29,7 +29,10 @@ spring:
 security:
   public-urls:
     - /auth/**
+    - /v3/api-docs
+    - /v3/api-docs/**
     - /swagger-ui/**
+    - /swagger-ui.html
     - /auth/login
     - /auth/register
     - /auth/refresh

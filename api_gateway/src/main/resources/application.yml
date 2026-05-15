@@ -34,3 +34,47 @@ spring:
             - Path=/api/e-market/payments/**
           filters:
             - RewritePath=/api/e-market/payments(?<segment>/?.*), /api/payment/payments$\{segment}
+
+        - id: iam_service_api_docs
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/e-market/v3/api-docs/iam
+          filters:
+            - SetPath=/api/iam/v3/api-docs
+
+        - id: product_service_api_docs
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/e-market/v3/api-docs/products
+          filters:
+            - SetPath=/api/product/v3/api-docs
+
+        - id: notification_service_api_docs
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/e-market/v3/api-docs/notifications
+          filters:
+            - SetPath=/api/notification/v3/api-docs
+
+        - id: payment_service_api_docs
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/e-market/v3/api-docs/payments
+          filters:
+            - SetPath=/api/payment/v3/api-docs
+
+springdoc:
+  api-docs:
+    path: /api/e-market/v3/api-docs
+  swagger-ui:
+    path: /api/e-market/swagger-ui.html
+    config-url: /api/e-market/v3/api-docs/swagger-config
+    urls:
+      - name: IAM Service
+        url: /api/e-market/v3/api-docs/iam
+      - name: Product Service
+        url: /api/e-market/v3/api-docs/products
+      - name: Notification Service
+        url: /api/e-market/v3/api-docs/notifications
+      - name: Payment Service
+        url: /api/e-market/v3/api-docs/payments
